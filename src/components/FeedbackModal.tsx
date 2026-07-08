@@ -22,7 +22,7 @@ export default function FeedbackModal({ open, onClose }: FeedbackModalProps) {
     other: "其他",
   };
 
-  const feedbackEmail = "3314212065@qq.com";
+  const feedbackEmail = "2575310966@qq.com";
 
   function generateEmailBody() {
     const lines = [
