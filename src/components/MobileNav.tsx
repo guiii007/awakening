@@ -1,12 +1,14 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { Home, Scale, MessageCircleHeart, LifeBuoy, BarChart3, Settings } from "lucide-react";
+import { Home, Scale, MessageCircleHeart, LifeBuoy, BarChart3, Settings, History, Wind } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV = [
   { to: "/", label: "觉醒", icon: Home, end: true },
+  { to: "/alternatives", label: "替代", icon: Wind },
   { to: "/tradeoff", label: "权衡", icon: Scale },
-  { to: "/chat", label: "对话", icon: MessageCircleHeart },
   { to: "/rescue", label: "救援", icon: LifeBuoy, highlight: true },
+  { to: "/chat", label: "对话", icon: MessageCircleHeart },
+  { to: "/review", label: "复盘", icon: History },
   { to: "/stats", label: "成长", icon: BarChart3 },
   { to: "/settings", label: "设置", icon: Settings },
 ];

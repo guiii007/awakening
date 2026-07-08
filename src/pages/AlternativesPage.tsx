@@ -251,7 +251,7 @@ function JournalGuide() {
           <button
             key={i}
             onClick={() => setText((t) => t + (t ? "\n" : "") + p)}
-            className="chip bg-cream-100 text-ink-500 hover:bg-cream-200 text-xs"
+            className="chip bg-cream-100 text-ink-500 hover:bg-cream-200 dark:bg-night-50/40 dark:text-ink-dark/80 dark:hover:bg-night-50/60 text-xs"
           >
             {p}
           </button>
