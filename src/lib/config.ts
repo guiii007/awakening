@@ -3,10 +3,9 @@ export const DEEPSEEK_API_KEY = import.meta.env.VITE_DEEPSEEK_API_KEY || "";
 export const DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions";
 export const DEEPSEEK_MODEL = "deepseek-chat";
 
-// Kimi (Moonshot) 图片生成 API 配置
-export const KIMI_API_KEY = import.meta.env.VITE_KIMI_API_KEY || "";
-export const KIMI_IMAGE_URL = "https://api.together.xyz/v1/images/generations";
-export const KIMI_IMAGE_MODEL = "moonshotai/Kimi-K2-Instruct";
+// Pollinations.AI 图片生成 API（完全免费，无需 API Key）
+export const IMAGE_API_URL = "https://image.pollinations.ai/prompt";
+export const IMAGE_MODEL = "flux";
 
 // 模型性格类型
 export type PersonalityType = "empathy" | "practical" | "rational";
