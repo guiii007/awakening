@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Lock, Unlock, Download, Trash2, Shield, AlertTriangle, Check, FileText, ChevronDown, ChevronUp, Moon, Sun, Sparkles } from "lucide-react";
+import { Lock, Unlock, Download, Trash2, Shield, AlertTriangle, Check, FileText, ChevronDown, ChevronUp, Moon, Sun, Sparkles, MessageCircleHeart } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { useThemeStore } from "@/lib/themeStore";
 import { StorageService } from "@/lib/storage";
 import PageHeader from "@/components/PageHeader";
+import FeedbackModal from "@/components/FeedbackModal";
 
 export default function SettingsPage() {
   const encrypted = useStore((s) => s.encrypted);
@@ -21,6 +22,7 @@ export default function SettingsPage() {
   const [toast, setToast] = useState("");
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [showEncryptionPanel, setShowEncryptionPanel] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
 
   function showToast(msg: string) {
     setToast(msg);
@@ -289,6 +291,34 @@ export default function SettingsPage() {
           </p>
         </motion.div>
 
+        {/* 意见反馈 */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.18 }}
+          className="card p-6"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-11 h-11 rounded-2xl bg-dawn-100 flex items-center justify-center dark:bg-night-50/40">
+              <MessageCircleHeart className="w-5 h-5 text-dawn-400" strokeWidth={1.8} />
+            </div>
+            <div>
+              <p className="font-serif text-lg font-bold text-ink-600 dark:text-ink-dark">意见反馈</p>
+              <p className="text-xs text-ink-400 mt-0.5 dark:text-ink-dark/60">有任何想法都可以告诉我</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowFeedback(true)}
+            className="btn-sage w-full"
+          >
+            <MessageCircleHeart className="w-4 h-4" /> 写下你的想法
+          </button>
+          <p className="text-xs text-ink-400 mt-3 dark:text-ink-dark/60">
+            · 每一条反馈我都会认真看<br />
+            · 可以是建议、问题，或者只是想说声谢谢
+          </p>
+        </motion.div>
+
         {/* 重置数据 */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -364,6 +394,8 @@ export default function SettingsPage() {
           <Check className="w-4 h-4 text-sage-300" /> {toast}
         </motion.div>
       )}
+
+      <FeedbackModal open={showFeedback} onClose={() => setShowFeedback(false)} />
     </div>
   );
 }
