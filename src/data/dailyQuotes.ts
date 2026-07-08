@@ -1,4 +1,4 @@
-import { DEEPSEEK_API_KEY, DEEPSEEK_API_URL, DEEPSEEK_MODEL } from "@/lib/config";
+import { DEEPSEEK_API_KEY, DEEPSEEK_API_URL, DEEPSEEK_MODEL, KIMI_API_KEY, KIMI_IMAGE_URL, KIMI_IMAGE_MODEL } from "@/lib/config";
 
 export interface DailyQuote {
   id: string;
@@ -128,8 +128,58 @@ export async function generateAIQuote(): Promise<DailyQuote> {
   }
 }
 
-export function getImageUrl(prompt: string): string {
+export async function generateImageUrl(prompt: string): Promise<string> {
   const pixelPrompt = `${prompt}, pixel art style, 8-bit retro game aesthetic, nostalgic, cute, warm colors, pixelated, low resolution, retro graphics`;
-  const encoded = encodeURIComponent(pixelPrompt);
+
+  if (!KIMI_API_KEY) {
+    return getFallbackImageUrl(pixelPrompt);
+  }
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
+
+    const res = await fetch(KIMI_IMAGE_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${KIMI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: KIMI_IMAGE_MODEL,
+        prompt: pixelPrompt,
+        width: 1920,
+        height: 1080,
+        steps: 28,
+        n: 1,
+        response_format: "url",
+      }),
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!res.ok) {
+      const errText = await res.text().catch(() => "");
+      console.warn("Kimi 图片生成失败:", errText);
+      return getFallbackImageUrl(pixelPrompt);
+    }
+
+    const data = await res.json();
+    const imageUrl = data.data?.[0]?.url;
+    if (!imageUrl) {
+      console.warn("Kimi 返回空图片 URL");
+      return getFallbackImageUrl(pixelPrompt);
+    }
+
+    return imageUrl;
+  } catch (e) {
+    console.warn("Kimi 图片生成异常，使用兜底:", e);
+    return getFallbackImageUrl(pixelPrompt);
+  }
+}
+
+function getFallbackImageUrl(prompt: string): string {
+  const encoded = encodeURIComponent(prompt);
   return `https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=${encoded}&image_size=landscape_16_9`;
 }

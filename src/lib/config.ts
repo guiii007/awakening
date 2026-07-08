@@ -1,9 +1,12 @@
 // DeepSeek API 配置
-// 注意：此 key 会随前端打包暴露，仅用于个人/演示用途。
-// 若要公开部署，建议改为后端代理转发以保护 key。
 export const DEEPSEEK_API_KEY = import.meta.env.VITE_DEEPSEEK_API_KEY || "";
 export const DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions";
 export const DEEPSEEK_MODEL = "deepseek-chat";
+
+// Kimi (Moonshot) 图片生成 API 配置
+export const KIMI_API_KEY = import.meta.env.VITE_KIMI_API_KEY || "";
+export const KIMI_IMAGE_URL = "https://api.together.xyz/v1/images/generations";
+export const KIMI_IMAGE_MODEL = "moonshotai/Kimi-K2-Instruct";
 
 // 模型性格类型
 export type PersonalityType = "empathy" | "practical" | "rational";

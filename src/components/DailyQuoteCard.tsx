@@ -1,41 +1,36 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, X, RefreshCw } from "lucide-react";
-import { generateAIQuote, getImageUrl, type DailyQuote } from "@/data/dailyQuotes";
+import { generateAIQuote, generateImageUrl, type DailyQuote } from "@/data/dailyQuotes";
 import { useStore } from "@/lib/store";
 
 export default function DailyQuoteCard() {
   const incrementCount = useStore((s) => s.incrementDailyQuoteCount);
   const [show, setShow] = useState(false);
   const [quote, setQuote] = useState<DailyQuote | null>(null);
+  const [imageUrl, setImageUrl] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [imageLoading, setImageLoading] = useState(false);
   const [imageError, setImageError] = useState(false);
-
-  // 确保最少加载 2 秒，给 AI 足够的缓冲时间
-  async function withMinDelay<T>(fn: () => Promise<T>): Promise<T> {
-    const start = Date.now();
-    const result = await fn();
-    const elapsed = Date.now() - start;
-    if (elapsed < 2000) {
-      await new Promise((r) => setTimeout(r, 2000 - elapsed));
-    }
-    return result;
-  }
 
   async function openQuote() {
     setLoading(true);
     setImageLoading(true);
     setImageError(false);
+    setImageUrl("");
     setShow(true);
     try {
-      const q = await withMinDelay(() => generateAIQuote());
+      const q = await generateAIQuote();
       setQuote(q);
       await incrementCount();
+
+      const url = await generateImageUrl(q.imagePrompt);
+      setImageUrl(url);
     } catch {
-      // generateAIQuote 内部已有兜底
+      // 内部已有兜底
     }
     setLoading(false);
+    setImageLoading(false);
   }
 
   async function refreshQuote() {
@@ -43,13 +38,18 @@ export default function DailyQuoteCard() {
     setLoading(true);
     setImageLoading(true);
     setImageError(false);
+    setImageUrl("");
     try {
-      const q = await withMinDelay(() => generateAIQuote());
+      const q = await generateAIQuote();
       setQuote(q);
+
+      const url = await generateImageUrl(q.imagePrompt);
+      setImageUrl(url);
     } catch {
-      // generateAIQuote 内部已有兜底
+      // 内部已有兜底
     }
     setLoading(false);
+    setImageLoading(false);
   }
 
   function handleImageLoad() {
@@ -125,15 +125,15 @@ export default function DailyQuoteCard() {
                       <p className="text-sm text-ink-400">图片加载失败</p>
                       <p className="text-xs text-ink-300">日签内容已生成，图片暂时无法加载</p>
                     </motion.div>
-                  ) : quote ? (
+                  ) : imageUrl ? (
                     <motion.img
-                      key={quote.id}
+                      key={quote?.id || imageUrl}
                       initial={{ opacity: 0, scale: 1.05 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.4 }}
-                      src={getImageUrl(quote.imagePrompt)}
-                      alt={quote.title}
+                      src={imageUrl}
+                      alt={quote?.title || "日签"}
                       className="w-full h-full object-cover"
                       onLoad={handleImageLoad}
                       onError={handleImageError}
