@@ -3,9 +3,10 @@ export const DEEPSEEK_API_KEY = import.meta.env.VITE_DEEPSEEK_API_KEY || "";
 export const DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions";
 export const DEEPSEEK_MODEL = "deepseek-chat";
 
-// Pollinations.AI 图片生成 API（完全免费，无需 API Key）
-export const IMAGE_API_URL = "https://image.pollinations.ai/prompt";
-export const IMAGE_MODEL = "flux";
+// 阿里云百炼 万相 文生图 API 配置
+export const ALIYUN_API_KEY = import.meta.env.VITE_ALIYUN_API_KEY || "";
+export const ALIYUN_IMAGE_API_URL = "https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation";
+export const ALIYUN_IMAGE_MODEL = "wan2.6-t2i";
 
 // 模型性格类型
 export type PersonalityType = "empathy" | "practical" | "rational";

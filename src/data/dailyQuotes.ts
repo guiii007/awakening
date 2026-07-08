@@ -1,4 +1,4 @@
-import { DEEPSEEK_API_KEY, DEEPSEEK_API_URL, DEEPSEEK_MODEL, IMAGE_API_URL, IMAGE_MODEL } from "@/lib/config";
+import { DEEPSEEK_API_KEY, DEEPSEEK_API_URL, DEEPSEEK_MODEL, ALIYUN_API_KEY, ALIYUN_IMAGE_API_URL, ALIYUN_IMAGE_MODEL } from "@/lib/config";
 
 export interface DailyQuote {
   id: string;
@@ -131,26 +131,102 @@ export async function generateAIQuote(): Promise<DailyQuote> {
 export async function generateImageUrl(prompt: string): Promise<string> {
   const pixelPrompt = `${prompt}, pixel art style, 8-bit retro game aesthetic, nostalgic, cute, warm colors, pixelated, low resolution, retro graphics`;
 
+  if (!ALIYUN_API_KEY) {
+    throw new Error("阿里云 API Key 未配置");
+  }
+
   try {
-    const encodedPrompt = encodeURIComponent(pixelPrompt);
-    const url = `${IMAGE_API_URL}/${encodedPrompt}?model=${IMAGE_MODEL}&width=1920&height=1080`;
-
+    // 万相2.6 同步调用
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    const timeoutId = setTimeout(() => controller.abort(), 60000);
 
-    const res = await fetch(url, {
+    const res = await fetch(ALIYUN_IMAGE_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${ALIYUN_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: ALIYUN_IMAGE_MODEL,
+        input: {
+          messages: [
+            {
+              role: "user",
+              content: [
+                { text: pixelPrompt },
+              ],
+            },
+          ],
+        },
+        parameters: {
+          size: "1920*1080",
+          n: 1,
+        },
+      }),
       signal: controller.signal,
     });
 
     clearTimeout(timeoutId);
 
     if (!res.ok) {
-      throw new Error(`图片生成失败: ${res.status}`);
+      const errText = await res.text().catch(() => "");
+      throw new Error(`万相图片生成失败: ${res.status} ${errText}`);
     }
 
-    return url;
+    const data = await res.json();
+
+    // wan2.6 同步返回格式
+    const imageUrl = data.output?.results?.[0]?.url
+      || data.output?.results?.[0]?.b64_image;
+
+    if (!imageUrl) {
+      // 可能是异步返回，需要轮询
+      const taskId = data.output?.task_id;
+      if (taskId) {
+        return await pollTaskResult(taskId);
+      }
+      throw new Error("万相返回空图片 URL");
+    }
+
+    return imageUrl;
   } catch (e) {
-    console.warn("图片生成异常:", e);
+    console.warn("万相图片生成异常:", e);
     throw e;
   }
+}
+
+// 异步轮询任务结果
+async function pollTaskResult(taskId: string): Promise<string> {
+  const pollUrl = `https://dashscope.aliyuncs.com/api/v1/tasks/${taskId}`;
+  const maxAttempts = 30;
+  const interval = 3000;
+
+  for (let i = 0; i < maxAttempts; i++) {
+    await new Promise((r) => setTimeout(r, interval));
+
+    const res = await fetch(pollUrl, {
+      headers: {
+        Authorization: `Bearer ${ALIYUN_API_KEY}`,
+      },
+    });
+
+    if (!res.ok) continue;
+
+    const data = await res.json();
+    const status = data.output?.task_status;
+
+    if (status === "SUCCEEDED") {
+      const imageUrl = data.output?.results?.[0]?.url
+        || data.output?.results?.[0]?.b64_image;
+      if (imageUrl) return imageUrl;
+      throw new Error("万相任务成功但无图片 URL");
+    }
+
+    if (status === "FAILED") {
+      throw new Error(`万相任务失败: ${data.output?.message || "未知错误"}`);
+    }
+    // PENDING / RUNNING 继续轮询
+  }
+
+  throw new Error("万相图片生成超时");
 }
