@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, Copy, Check, MessageCircleHeart, Image, Trash2 } from "lucide-react";
+import { X, Copy, Check, MessageCircleHeart, Image, Trash2, Mail } from "lucide-react";
 
 interface FeedbackModalProps {
   open: boolean;
@@ -15,8 +15,7 @@ export default function FeedbackModal({ open, onClose }: FeedbackModalProps) {
   const [contact, setContact] = useState("");
   const [images, setImages] = useState<string[]>([]);
   const [copied, setCopied] = useState(false);
-  const [sending, setSending] = useState(false);
-  const [sent, setSent] = useState(false);
+  const [emailCopied, setEmailCopied] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const typeLabels: Record<FeedbackType, string> = {
@@ -25,6 +24,8 @@ export default function FeedbackModal({ open, onClose }: FeedbackModalProps) {
     praise: "夸夸作者",
     other: "其他",
   };
+
+  const feedbackEmail = "2575310966@qq.com";
 
   async function handleImageUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const files = event.target.files;
@@ -54,20 +55,6 @@ export default function FeedbackModal({ open, onClose }: FeedbackModalProps) {
     setImages((prev) => prev.filter((_, i) => i !== index));
   }
 
-  async function handleSubmit() {
-    if (!content.trim()) return;
-
-    await handleCopy();
-
-    const qqMailUrl = "https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=2575310966@qq.com";
-    window.open(qqMailUrl, "_blank");
-
-    setSent(true);
-    setTimeout(() => {
-      handleClose();
-    }, 2000);
-  }
-
   function generateTextContent() {
     const lines = [
       `【反馈类型】${typeLabels[type]}`,
@@ -78,17 +65,16 @@ export default function FeedbackModal({ open, onClose }: FeedbackModalProps) {
       `【联系方式】${contact || "（未填写）"}`,
       "",
       `【发送时间】${new Date().toLocaleString("zh-CN")}`,
-      `【图片数量】${images.length}`,
+      `【图片说明】共 ${images.length} 张图片（请随邮件一并发送）`,
     ];
     return lines.join("\n");
   }
 
-  async function handleCopy() {
-    const text = generateTextContent();
+  async function copyToClipboard(text: string, setCopiedState: (v: boolean) => void) {
     try {
       await navigator.clipboard.writeText(text);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setCopiedState(true);
+      setTimeout(() => setCopiedState(false), 2000);
     } catch {
       const textarea = document.createElement("textarea");
       textarea.value = text;
@@ -96,9 +82,19 @@ export default function FeedbackModal({ open, onClose }: FeedbackModalProps) {
       textarea.select();
       document.execCommand("copy");
       document.body.removeChild(textarea);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      setCopiedState(true);
+      setTimeout(() => setCopiedState(false), 2000);
     }
+  }
+
+  function handleCopyContent() {
+    const text = generateTextContent();
+    const imageInfo = images.length > 0 ? `\n\n图片请作为附件添加到邮件中（${images.length} 张）` : "";
+    copyToClipboard(text + imageInfo, setCopied);
+  }
+
+  function handleCopyEmail() {
+    copyToClipboard(feedbackEmail, setEmailCopied);
   }
 
   function handleClose() {
@@ -106,7 +102,6 @@ export default function FeedbackModal({ open, onClose }: FeedbackModalProps) {
     setContact("");
     setType("suggestion");
     setImages([]);
-    setSent(false);
     onClose();
   }
 
@@ -126,154 +121,150 @@ export default function FeedbackModal({ open, onClose }: FeedbackModalProps) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-md card p-6 bg-gradient-to-br from-cream-50 to-cream-100 dark:from-night-200 dark:to-night-100 dark:border-night-50/30 shadow-soft"
+            className="relative w-full max-w-md card p-6 bg-gradient-to-br from-cream-50 to-cream-100 dark:from-night-200 dark:to-night-100 dark:border-night-50/30 shadow-soft max-h-[90vh] overflow-y-auto"
           >
             <button
               onClick={handleClose}
-              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-cream-200/60 dark:hover:bg-night-50/30 transition"
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-cream-200/60 dark:hover:bg-night-50/30 transition z-10"
             >
               <X className="w-4 h-4 text-ink-400" />
             </button>
 
-            {sent ? (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center py-8"
-              >
-                <div className="w-16 h-16 rounded-full bg-sage-100 dark:bg-sage-500/20 flex items-center justify-center mx-auto mb-4">
-                  <Check className="w-8 h-8 text-sage-400 dark:text-sage-300" />
-                </div>
-                <p className="font-serif text-xl font-bold text-ink-600 dark:text-ink-dark mb-2">
-                  发送成功！
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-11 h-11 rounded-2xl bg-dawn-100 flex items-center justify-center dark:bg-night-50/40">
+                <MessageCircleHeart className="w-5 h-5 text-dawn-400" strokeWidth={1.8} />
+              </div>
+              <div>
+                <p className="font-serif text-lg font-bold text-ink-600 dark:text-ink-dark">
+                  你的声音很重要
                 </p>
-                <p className="text-sm text-ink-400 dark:text-ink-dark/60">
-                  谢谢你的反馈，我会认真看的
+                <p className="text-xs text-ink-400 dark:text-ink-dark/60 mt-0.5">
+                  每一条反馈我都会认真看
                 </p>
-              </motion.div>
-            ) : (
-              <>
-                <div className="flex items-center gap-3 mb-5">
-                  <div className="w-11 h-11 rounded-2xl bg-dawn-100 flex items-center justify-center dark:bg-night-50/40">
-                    <MessageCircleHeart className="w-5 h-5 text-dawn-400" strokeWidth={1.8} />
-                  </div>
-                  <div>
-                    <p className="font-serif text-lg font-bold text-ink-600 dark:text-ink-dark">
-                      你的声音很重要
-                    </p>
-                    <p className="text-xs text-ink-400 dark:text-ink-dark/60 mt-0.5">
-                      每一条反馈我都会认真看
-                    </p>
-                  </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm text-ink-500 dark:text-ink-dark/80 mb-2">反馈类型</p>
+                <div className="grid grid-cols-4 gap-2">
+                  {(Object.keys(typeLabels) as FeedbackType[]).map((t) => (
+                    <button
+                      key={t}
+                      onClick={() => setType(t)}
+                      className={`py-2 text-xs rounded-xl transition ${
+                        type === t
+                          ? "bg-dawn-400 text-white shadow-soft"
+                          : "bg-cream-100 text-ink-400 hover:bg-cream-200/60 dark:bg-night-50/40 dark:text-ink-dark/60 dark:hover:bg-night-50/60"
+                      }`}
+                    >
+                      {typeLabels[t]}
+                    </button>
+                  ))}
                 </div>
+              </div>
 
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-ink-500 dark:text-ink-dark/80 mb-2">反馈类型</p>
-                    <div className="grid grid-cols-4 gap-2">
-                      {(Object.keys(typeLabels) as FeedbackType[]).map((t) => (
-                        <button
-                          key={t}
-                          onClick={() => setType(t)}
-                          className={`py-2 text-xs rounded-xl transition ${
-                            type === t
-                              ? "bg-dawn-400 text-white shadow-soft"
-                              : "bg-cream-100 text-ink-400 hover:bg-cream-200/60 dark:bg-night-50/40 dark:text-ink-dark/60 dark:hover:bg-night-50/60"
-                          }`}
-                        >
-                          {typeLabels[t]}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+              <div>
+                <p className="text-sm text-ink-500 dark:text-ink-dark/80 mb-2">
+                  想说的话 <span className="text-dawn-400">*</span>
+                </p>
+                <textarea
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  placeholder="比如：某个按钮不好用、希望加什么功能、或者只是想说声谢谢..."
+                  rows={5}
+                  className="input-soft resize-none"
+                />
+              </div>
 
-                  <div>
-                    <p className="text-sm text-ink-500 dark:text-ink-dark/80 mb-2">
-                      想说的话 <span className="text-dawn-400">*</span>
-                    </p>
-                    <textarea
-                      value={content}
-                      onChange={(e) => setContent(e.target.value)}
-                      placeholder="比如：某个按钮不好用、希望加什么功能、或者只是想说声谢谢..."
-                      rows={5}
-                      className="input-soft resize-none"
-                    />
-                  </div>
-
-                  <div>
-                    <p className="text-sm text-ink-500 dark:text-ink-dark/80 mb-2">
-                      添加图片 <span className="text-ink-300 text-xs">（可选，最多3张）</span>
-                    </p>
-                    <div className="flex gap-2">
+              <div>
+                <p className="text-sm text-ink-500 dark:text-ink-dark/80 mb-2">
+                  添加图片 <span className="text-ink-300 text-xs">（可选，最多3张）</span>
+                </p>
+                <div className="flex gap-2 flex-wrap">
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-16 h-16 rounded-xl border-2 border-dashed border-cream-300 dark:border-night-50/40 flex items-center justify-center hover:border-dawn-300 transition"
+                  >
+                    <Image className="w-5 h-5 text-ink-300" />
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                  {images.map((img, index) => (
+                    <div key={index} className="relative w-16 h-16 rounded-xl overflow-hidden">
+                      <img src={img} alt={`图片 ${index + 1}`} className="w-full h-full object-cover" />
                       <button
-                        onClick={() => fileInputRef.current?.click()}
-                        className="w-16 h-16 rounded-xl border-2 border-dashed border-cream-300 dark:border-night-50/40 flex items-center justify-center hover:border-dawn-300 transition"
+                        onClick={() => removeImage(index)}
+                        className="absolute top-1 right-1 w-5 h-5 rounded-full bg-ink-600/80 flex items-center justify-center"
                       >
-                        <Image className="w-5 h-5 text-ink-300" />
+                        <Trash2 className="w-3 h-3 text-white" />
                       </button>
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        onChange={handleImageUpload}
-                        className="hidden"
-                      />
-                      {images.map((img, index) => (
-                        <div key={index} className="relative w-16 h-16 rounded-xl overflow-hidden">
-                          <img src={img} alt={`图片 ${index + 1}`} className="w-full h-full object-cover" />
-                          <button
-                            onClick={() => removeImage(index)}
-                            className="absolute top-1 right-1 w-5 h-5 rounded-full bg-ink-600/80 flex items-center justify-center"
-                          >
-                            <Trash2 className="w-3 h-3 text-white" />
-                          </button>
-                        </div>
-                      ))}
                     </div>
-                    <p className="text-xs text-ink-300 mt-1">每张图片不超过 5MB</p>
-                  </div>
+                  ))}
+                </div>
+                <p className="text-xs text-ink-300 mt-1">每张图片不超过 5MB</p>
+              </div>
 
-                  <div>
-                    <p className="text-sm text-ink-500 dark:text-ink-dark/80 mb-2">
-                      联系方式 <span className="text-ink-300 text-xs">（选填）</span>
-                    </p>
-                    <input
-                      type="text"
-                      value={contact}
-                      onChange={(e) => setContact(e.target.value)}
-                      placeholder="微信/邮箱，方便我回复你"
-                      className="input-soft"
-                    />
-                  </div>
+              <div>
+                <p className="text-sm text-ink-500 dark:text-ink-dark/80 mb-2">
+                  联系方式 <span className="text-ink-300 text-xs">（选填）</span>
+                </p>
+                <input
+                  type="text"
+                  value={contact}
+                  onChange={(e) => setContact(e.target.value)}
+                  placeholder="微信/邮箱，方便我回复你"
+                  className="input-soft"
+                />
+              </div>
 
-                  <div className="grid grid-cols-2 gap-3 pt-2">
-                    <button
-                      onClick={handleCopy}
-                      disabled={!content.trim()}
-                      className="btn-ghost disabled:opacity-40"
-                    >
-                      {copied ? (
-                        <><Check className="w-4 h-4 text-sage-400" /> 已复制</>
-                      ) : (
-                        <><Copy className="w-4 h-4" /> 复制内容</>
-                      )}
-                    </button>
-                    <button
-                      onClick={handleSubmit}
-                      disabled={!content.trim()}
-                      className="btn-sage disabled:opacity-40 flex items-center justify-center gap-2"
-                    >
-                      <Send className="w-4 h-4" /> 发送反馈
-                    </button>
-                  </div>
+              <button
+                onClick={handleCopyContent}
+                disabled={!content.trim()}
+                className="btn-sage w-full disabled:opacity-40"
+              >
+                {copied ? (
+                  <><Check className="w-4 h-4" /> 已复制到剪贴板</>
+                ) : (
+                  <><Copy className="w-4 h-4" /> 复制反馈内容</>
+                )}
+              </button>
 
-                  <p className="text-xs text-ink-300 text-center">
-                    你的反馈会直接发送到我的邮箱
+              <div className="rounded-xl bg-dawn-50/60 dark:bg-dawn-500/10 border border-dawn-200/40 dark:border-dawn-500/20 p-4 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Mail className="w-4 h-4 text-dawn-400" />
+                  <p className="text-sm font-medium text-ink-600 dark:text-ink-dark">
+                    请发送到我的邮箱
                   </p>
                 </div>
-              </>
-            )}
+                <div className="flex items-center gap-2">
+                  <code className="flex-1 px-3 py-2 rounded-lg bg-cream-100 dark:bg-night-50/40 text-sm text-ink-600 dark:text-ink-dark font-mono select-all">
+                    {feedbackEmail}
+                  </code>
+                  <button
+                    onClick={handleCopyEmail}
+                    className="px-3 py-2 rounded-lg bg-cream-100 dark:bg-night-50/40 hover:bg-cream-200/60 dark:hover:bg-night-50/60 transition"
+                  >
+                    {emailCopied ? (
+                      <Check className="w-4 h-4 text-sage-400" />
+                    ) : (
+                      <Copy className="w-4 h-4 text-ink-400" />
+                    )}
+                  </button>
+                </div>
+                <p className="text-xs text-ink-400 dark:text-ink-dark/60 leading-relaxed">
+                  1. 点击上方「复制反馈内容」<br />
+                  2. 打开你的邮箱应用，粘贴发送<br />
+                  3. 如果有图片，记得作为附件一并发送
+                </p>
+              </div>
+            </div>
           </motion.div>
         </div>
       )}
