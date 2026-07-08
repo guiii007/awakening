@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Send, Copy, Check, MessageCircleHeart, Image, Trash2, Loader2 } from "lucide-react";
+import { X, Send, Copy, Check, MessageCircleHeart, Image, Trash2 } from "lucide-react";
 
 interface FeedbackModalProps {
   open: boolean;
@@ -25,8 +25,6 @@ export default function FeedbackModal({ open, onClose }: FeedbackModalProps) {
     praise: "夸夸作者",
     other: "其他",
   };
-
-  const web3formsAccessKey = "288f8722-227c-4218-8a5d-59e715682706";
 
   async function handleImageUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const files = event.target.files;
@@ -59,66 +57,15 @@ export default function FeedbackModal({ open, onClose }: FeedbackModalProps) {
   async function handleSubmit() {
     if (!content.trim()) return;
 
-    setSending(true);
+    await handleCopy();
 
-    const formData = new FormData();
-    formData.append("access_key", web3formsAccessKey);
-    formData.append("subject", `[觉醒反馈] ${typeLabels[type]}`);
-    formData.append("from_name", "觉醒用户");
-    formData.append("reply_to", contact || "未填写");
+    const qqMailUrl = "https://mail.qq.com/cgi-bin/qm_share?t=qm_mailme&email=2575310966@qq.com";
+    window.open(qqMailUrl, "_blank");
 
-    const message = [
-      `【反馈类型】${typeLabels[type]}`,
-      "",
-      `【反馈内容】`,
-      content,
-      "",
-      `【联系方式】${contact || "（未填写）"}`,
-      "",
-      `【发送时间】${new Date().toLocaleString("zh-CN")}`,
-      `【图片数量】${images.length}`,
-    ].join("\n");
-    formData.append("message", message);
-
-    images.forEach((img, index) => {
-      const base64Data = img.split(",")[1];
-      const mimeType = img.split(",")[0].split(":")[1].split(";")[0];
-      const ext = mimeType.split("/")[1];
-      const blob = base64ToBlob(base64Data, mimeType);
-      formData.append(`file_${index + 1}`, blob, `feedback_${index + 1}.${ext}`);
-    });
-
-    try {
-      const response = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        body: formData,
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        setSent(true);
-        setTimeout(() => {
-          handleClose();
-        }, 2000);
-      } else {
-        alert("发送失败，请重试或使用复制功能");
-      }
-    } catch {
-      alert("网络错误，请重试或使用复制功能");
-    } finally {
-      setSending(false);
-    }
-  }
-
-  function base64ToBlob(base64: string, mimeType: string): Blob {
-    const byteString = atob(base64);
-    const ab = new ArrayBuffer(byteString.length);
-    const ia = new Uint8Array(ab);
-    for (let i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
-    }
-    return new Blob([ab], { type: mimeType });
+    setSent(true);
+    setTimeout(() => {
+      handleClose();
+    }, 2000);
   }
 
   function generateTextContent() {
@@ -314,18 +261,10 @@ export default function FeedbackModal({ open, onClose }: FeedbackModalProps) {
                     </button>
                     <button
                       onClick={handleSubmit}
-                      disabled={!content.trim() || sending}
+                      disabled={!content.trim()}
                       className="btn-sage disabled:opacity-40 flex items-center justify-center gap-2"
                     >
-                      {sending ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin" /> 发送中
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-4 h-4" /> 发送反馈
-                        </>
-                      )}
+                      <Send className="w-4 h-4" /> 发送反馈
                     </button>
                   </div>
 
