@@ -135,10 +135,13 @@ export async function generateImageUrl(prompt: string): Promise<string> {
     throw new Error("阿里云 API Key 未配置");
   }
 
+  console.log("开始生成日签图片，prompt:", pixelPrompt);
+
   try {
-    // 万相2.6 同步调用
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 60000);
+
+    console.log("调用万相 API:", ALIYUN_IMAGE_API_URL);
 
     const res = await fetch(ALIYUN_IMAGE_API_URL, {
       method: "POST",
@@ -159,7 +162,7 @@ export async function generateImageUrl(prompt: string): Promise<string> {
           ],
         },
         parameters: {
-          size: "1920*1080",
+          size: "1024*768",
           n: 1,
         },
       }),
@@ -168,29 +171,28 @@ export async function generateImageUrl(prompt: string): Promise<string> {
 
     clearTimeout(timeoutId);
 
+    console.log("万相 API 返回状态:", res.status);
+
     if (!res.ok) {
       const errText = await res.text().catch(() => "");
-      throw new Error(`万相图片生成失败: ${res.status} ${errText}`);
+      console.error("万相图片生成失败详情:", errText);
+      throw new Error(`万相图片生成失败: ${res.status}`);
     }
 
     const data = await res.json();
+    console.log("万相 API 返回数据:", JSON.stringify(data).substring(0, 500));
 
-    // wan2.6 同步返回格式
-    const imageUrl = data.output?.results?.[0]?.url
-      || data.output?.results?.[0]?.b64_image;
+    // 万相2.6 实际返回格式: output.choices[0].message.content[0].image
+    const imageUrl = data.output?.choices?.[0]?.message?.content?.[0]?.image;
 
     if (!imageUrl) {
-      // 可能是异步返回，需要轮询
-      const taskId = data.output?.task_id;
-      if (taskId) {
-        return await pollTaskResult(taskId);
-      }
       throw new Error("万相返回空图片 URL");
     }
 
+    console.log("万相图片生成成功:", imageUrl.substring(0, 50));
     return imageUrl;
   } catch (e) {
-    console.warn("万相图片生成异常:", e);
+    console.error("万相图片生成异常:", e);
     throw e;
   }
 }
