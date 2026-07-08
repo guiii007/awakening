@@ -1,0 +1,109 @@
+<view class="container tabbar-page {{theme === 'dark' ? 'dark' : ''}}">
+  <view class="mt-6">
+    <text class="text-xs tracking-widest text-sage-400 uppercase font-medium">成长面板</text>
+    <text class="font-serif text-3xl font-bold text-ink-600 mt-2 block">看见每一步的积累</text>
+    <text class="text-sm text-ink-400 mt-2 block">数据不会说谎，你比自己以为的更努力</text>
+  </view>
+
+  <!-- 核心数据 -->
+  <view class="mt-6 grid grid-cols-2 gap-4">
+    <view class="card p-5">
+      <text class="text-xs tracking-widest text-sage-400 uppercase font-medium">克制成功</text>
+      <text class="font-serif text-5xl font-bold text-ink-600 mt-2 block">{{stats.totalRestrain}}</text>
+      <text class="text-xs text-ink-400 mt-1 block">次选择了更好的自己</text>
+    </view>
+    <view class="card p-5">
+      <text class="text-xs tracking-widest text-dawn-400 uppercase font-medium">觉察比例</text>
+      <view class="mt-2">
+        <text class="font-serif text-5xl font-bold text-ink-600">{{stats.successRate}}</text>
+        <text class="text-xl text-ink-400">%</text>
+      </view>
+      <text class="text-xs text-ink-400 mt-1 block">每一次觉察都在积累</text>
+    </view>
+    <view class="card p-5">
+      <text class="text-xs tracking-widest text-dusk-300 uppercase font-medium">当前连胜</text>
+      <text class="font-serif text-5xl font-bold text-ink-600 mt-2 block">{{stats.currentStreak}}</text>
+      <text class="text-xs text-ink-400 mt-1 block">天连续觉察</text>
+    </view>
+    <view class="card p-5">
+      <text class="text-xs tracking-widest text-gold-400 uppercase font-medium">历史最佳</text>
+      <text class="font-serif text-5xl font-bold text-ink-600 mt-2 block">{{stats.bestStreak}}</text>
+      <text class="text-xs text-ink-400 mt-1 block">天</text>
+    </view>
+  </view>
+
+  <!-- 30天趋势图 -->
+  <view class="mt-8 card p-5">
+    <text class="font-serif text-lg font-bold text-ink-600 block mb-4">近 30 天趋势</text>
+    <view class="flex items-end justify-between gap-1 h-40">
+      <block wx:for="{{stats.trend30}}" wx:key="date">
+        <view class="flex-1 flex flex-col items-center gap-1">
+          <view class="w-full flex flex-col items-center" style="height: 100%;">
+            <view class="w-full bg-dawn-200 rounded-t" style="height: {{item.relapse / maxTrend * 100}}%;"></view>
+            <view class="w-full bg-sage-300" style="height: {{item.restrain / maxTrend * 100}}%;"></view>
+          </view>
+          <text class="text-[10px] text-ink-400 transform -rotate-45 origin-top-left">{{item.date}}</text>
+        </view>
+      </block>
+    </view>
+    <view class="mt-4 flex items-center gap-4 text-xs text-ink-400">
+      <view class="flex items-center gap-1">
+        <view class="w-3 h-3 rounded-full bg-sage-300"></view>
+        <text>克制</text>
+      </view>
+      <view class="flex items-center gap-1">
+        <view class="w-3 h-3 rounded-full bg-dawn-200"></view>
+        <text>放纵</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 诱因分布 -->
+  <view wx:if="{{stats.triggerDistribution.length > 0}}" class="mt-8 card p-5">
+    <text class="font-serif text-lg font-bold text-ink-600 block mb-4">主要诱因</text>
+    <view class="space-y-3">
+      <block wx:for="{{stats.triggerDistribution}}" wx:key="trigger">
+        <view class="flex items-center gap-3">
+          <text class="text-sm text-ink-500 w-12 shrink-0">{{TRIGGER_LABELS[item.trigger]}}</text>
+          <view class="flex-1 h-5 rounded-full bg-cream-200 overflow-hidden">
+            <view class="h-full rounded-full" style="width: {{item.count / stats.totalRestrain + stats.totalRelapse * 100}}%; background: {{TRIGGER_COLORS[item.trigger]}};"></view>
+          </view>
+          <text class="text-sm text-ink-500 w-8 text-right tabular-nums">{{item.count}}</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 完整事件流 -->
+  <view wx:if="{{events.length > 0}}" class="mt-8 card p-5">
+    <text class="font-serif text-lg font-bold text-ink-600 block mb-4">完整事件流</text>
+    <view class="space-y-2">
+      <block wx:for="{{events}}" wx:key="id">
+        <view bindtap="toggleExpand" data-id="{{item.id}}" class="flex items-center gap-3 p-2.5 rounded-xl cursor-pointer hover:bg-cream-100/50 transition">
+          <view class="w-2 h-2 rounded-full {{item.type === 'restrain' ? 'bg-sage-300' : 'bg-dawn-300'}}"></view>
+          <text class="text-xs text-ink-400 w-20 shrink-0">{{item.timestamp}}</text>
+          <text class="text-sm text-ink-600 flex-1 truncate">{{item.scenario || '未记录'}}</text>
+          <view class="text-[11px] px-2 py-0.5 rounded-full {{item.type === 'restrain' ? 'bg-sage-100 text-sage-500' : 'bg-dawn-100 text-dawn-400'}}">
+            {{item.type === 'restrain' ? '克制' : '放纵'}}
+          </view>
+        </view>
+        <view wx:if="{{expandedEventId === item.id}}" class="ml-7 mr-4 mb-3 p-4 rounded-xl bg-cream-50/80 text-sm">
+          <view class="mb-2">
+            <text class="text-xs text-ink-400 block">场景：</text>
+            <text class="text-ink-600">{{item.scenario || '未记录'}}</text>
+          </view>
+          <view wx:if="{{item.outcomeNote}}">
+            <text class="text-xs text-ink-400 block">感受：</text>
+            <text class="text-ink-600">{{item.outcomeNote}}</text>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <view wx:if="{{events.length === 0}}" class="mt-16 text-center">
+    <text style="font-size: 96rpx; opacity: 0.3;">📊</text>
+    <text class="font-serif text-xl font-bold text-ink-600 mt-4 block">还没有记录</text>
+    <text class="text-sm text-ink-400 mt-2 block">每一次记录，都是成长的足迹</text>
+  </view>
+</view>

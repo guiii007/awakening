@@ -1,0 +1,74 @@
+<view class="chat-page {{theme === 'dark' ? 'dark' : ''}}">
+  <!-- 顶部性格选择 -->
+  <view class="chat-header">
+    <view class="flex items-center justify-between px-4 py-3">
+      <view bindtap="goBack" class="w-8 h-8 flex items-center justify-center">
+        <text class="text-ink-500">←</text>
+      </view>
+      <text class="font-serif font-bold text-ink-600">和小醒聊聊</text>
+      <view class="w-8 h-8"></view>
+    </view>
+    <view class="flex gap-2 px-4 pb-3 overflow-x-auto">
+      <block wx:for="{{personalities}}" wx:key="value">
+        <button
+          bindtap="selectPersonality"
+          data-value="{{item.value}}"
+          class="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs transition {{personality === item.value ? 'bg-dawn-200 text-ink-600 font-medium' : 'bg-cream-100/80 text-ink-500'}}"
+        >
+          <text>{{item.emoji}}</text>
+          <text>{{item.label}}</text>
+        </button>
+      </block>
+    </view>
+  </view>
+
+  <!-- 消息列表 -->
+  <scroll-view scroll-y class="chat-messages" scroll-top="{{scrollTop}}">
+    <view class="p-4 space-y-4">
+      <block wx:for="{{messages}}" wx:key="id">
+        <!-- AI 消息 -->
+        <view wx:if="{{item.role === 'ai'}}" class="flex items-start gap-3">
+          <view class="w-9 h-9 rounded-full bg-dawn-200 flex items-center justify-center shrink-0">
+            <text style="font-size: 32rpx;">💗</text>
+          </view>
+          <view class="bubble-ai max-w-[75%] px-4 py-3 rounded-2xl rounded-tl-sm bg-cream-100 text-ink-600 text-sm leading-relaxed">
+            <text>{{item.content || '...'}}</text>
+          </view>
+        </view>
+        <!-- 用户消息 -->
+        <view wx:else class="flex items-start gap-3 justify-end">
+          <view class="bubble-user max-w-[75%] px-4 py-3 rounded-2xl rounded-tr-sm bg-dawn-300 text-white text-sm leading-relaxed">
+            <text>{{item.content}}</text>
+          </view>
+          <view class="w-9 h-9 rounded-full bg-sage-200 flex items-center justify-center shrink-0">
+            <text style="font-size: 32rpx;">🙂</text>
+          </view>
+        </view>
+      </block>
+    </view>
+  </scroll-view>
+
+  <!-- 输入框 -->
+  <view class="chat-input">
+    <view class="flex items-end gap-3 p-3 bg-cream-50 border-t border-cream-200/60">
+      <textarea
+        value="{{inputText}}"
+        bindinput="onInput"
+        placeholder="说点什么..."
+        class="flex-1 px-4 py-3 rounded-2xl bg-cream-100 text-ink-600 text-sm resize-none max-h-32"
+        auto-height
+        adjust-position
+        show-confirm-bar="{{false}}"
+        confirm-type="send"
+        bindconfirm="sendMessage"
+      />
+      <button
+        bindtap="sendMessage"
+        class="shrink-0 w-12 h-12 rounded-full bg-dawn-300 flex items-center justify-center {{inputText && !isLoading ? '' : 'opacity-50'}}"
+        disabled="{{!inputText || isLoading}}"
+      >
+        <text class="text-white text-lg">{{isLoading ? '…' : '→'}}</text>
+      </button>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,99 @@
+<view class="container tabbar-page {{theme === 'dark' ? 'dark' : ''}}">
+  <view class="mt-6">
+    <text class="text-xs tracking-widest text-dawn-400 uppercase font-medium">设置</text>
+    <text class="font-serif text-3xl font-bold text-ink-600 mt-2 block">把 App 调成你喜欢的样子</text>
+  </view>
+
+  <!-- 使用数据 -->
+  <view class="mt-6 card p-5">
+    <text class="text-xs tracking-widest text-sage-400 uppercase font-medium mb-4 block">使用数据</text>
+    <view class="grid grid-cols-3 gap-4 text-center">
+      <view>
+        <text class="font-serif text-3xl font-bold text-ink-600 block">{{progress.dailyQuoteCount}}</text>
+        <text class="text-xs text-ink-400">日签次数</text>
+      </view>
+      <view>
+        <text class="font-serif text-3xl font-bold text-ink-600 block">{{progress.totalRestrain}}</text>
+        <text class="text-xs text-ink-400">克制成功</text>
+      </view>
+      <view>
+        <text class="font-serif text-3xl font-bold text-ink-600 block">{{progress.totalRelapse}}</text>
+        <text class="text-xs text-ink-400">放纵记录</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 外观设置 -->
+  <view class="mt-6 card p-5">
+    <text class="text-xs tracking-widest text-dusk-300 uppercase font-medium mb-4 block">外观</text>
+    <view class="flex items-center justify-between py-3">
+      <view class="flex items-center gap-3">
+        <text style="font-size: 36rpx;">{{theme === 'dark' ? '🌙' : '☀️'}}</text>
+        <view>
+          <text class="text-sm font-medium text-ink-600 block">深色模式</text>
+          <text class="text-xs text-ink-400">保护眼睛，更适合夜晚</text>
+        </view>
+      </view>
+      <switch checked="{{theme === 'dark'}}" bindchange="toggleTheme" color="#E8B4A0" />
+    </view>
+  </view>
+
+  <!-- 功能入口 -->
+  <view class="mt-6 card p-5">
+    <text class="text-xs tracking-widest text-sage-400 uppercase font-medium mb-4 block">更多功能</text>
+    <view bindtap="goToAlternatives" class="flex items-center justify-between py-3 border-b border-cream-200/60">
+      <view class="flex items-center gap-3">
+        <text style="font-size: 36rpx;">🌱</text>
+        <text class="text-sm font-medium text-ink-600">健康替代方案</text>
+      </view>
+      <text class="text-ink-400">→</text>
+    </view>
+    <view bindtap="goToReview" class="flex items-center justify-between py-3">
+      <view class="flex items-center gap-3">
+        <text style="font-size: 36rpx;">📖</text>
+        <text class="text-sm font-medium text-ink-600">历史记录</text>
+      </view>
+      <text class="text-ink-400">→</text>
+    </view>
+  </view>
+
+  <!-- 数据管理 -->
+  <view class="mt-6 card p-5">
+    <text class="text-xs tracking-widest text-gold-400 uppercase font-medium mb-4 block">数据管理</text>
+    <view bindtap="exportData" class="flex items-center justify-between py-3 border-b border-cream-200/60">
+      <view class="flex items-center gap-3">
+        <text style="font-size: 36rpx;">📤</text>
+        <view>
+          <text class="text-sm font-medium text-ink-600 block">导出数据</text>
+          <text class="text-xs text-ink-400">复制所有数据到剪贴板</text>
+        </view>
+      </view>
+      <text class="text-ink-400">→</text>
+    </view>
+    <view bindtap="resetData" class="flex items-center justify-between py-3">
+      <view class="flex items-center gap-3">
+        <text style="font-size: 36rpx;">🗑️</text>
+        <view>
+          <text class="text-sm font-medium text-dawn-400 block">重置所有数据</text>
+          <text class="text-xs text-ink-400">清空所有记录，不可恢复</text>
+        </view>
+      </view>
+      <text class="text-ink-400">→</text>
+    </view>
+  </view>
+
+  <!-- 隐私承诺 -->
+  <view class="mt-6 card p-5">
+    <text class="text-xs tracking-widest text-sage-400 uppercase font-medium mb-3 block">💚 隐私承诺</text>
+    <text class="text-sm text-ink-500 leading-relaxed block">
+      你的所有记录只存储在这台设备上，不会上传到任何服务器。你随时可以导出或删除全部数据。
+    </text>
+    <text class="text-sm text-ink-500 leading-relaxed mt-2 block">
+      这是一款为你而做的工具，不是为了收集你的数据。
+    </text>
+  </view>
+
+  <view class="mt-8 text-center">
+    <text class="text-xs text-ink-400">觉醒 v1.0.0</text>
+  </view>
+</view>

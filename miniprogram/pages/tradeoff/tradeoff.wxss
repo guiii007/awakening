@@ -1,0 +1,33 @@
+.space-y-4 > * + * { margin-top: 32rpx; }
+.w-full { width: 100%; }
+.h-32 { height: 128rpx; }
+.h-40 { height: 160rpx; }
+.max-h-\[85vh\] { max-height: 85vh; }
+
+.fixed { position: fixed; }
+.inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
+.z-50 { z-index: 50; }
+.relative { position: relative; }
+.items-end { align-items: flex-end; }
+.bottom-0 { bottom: 0; }
+.left-0 { left: 0; }
+.right-0 { right: 0; }
+
+.overflow-y-auto { overflow-y: auto; }
+.rounded-t-3xl { border-radius: 48rpx 48rpx 0 0; }
+.block { display: block; }
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.bg-sage-100\/60 { background: rgba(221, 229, 224, 0.6); }
+.bg-dawn-100\/60 { background: rgba(247, 221, 210, 0.6); }
+.bg-dawn-100\/70 { background: rgba(247, 221, 210, 0.7); }
+.bg-cream-50 { background: #FBF8F2; }
+.text-sage-500 { color: #536B5E; }
+
+.ml-3 { margin-left: 24rpx; }
+.mt-16 { margin-top: 128rpx; }

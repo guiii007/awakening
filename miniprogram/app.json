@@ -1,0 +1,59 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/tradeoff/tradeoff",
+    "pages/chat/chat",
+    "pages/review/review",
+    "pages/rescue/rescue",
+    "pages/stats/stats",
+    "pages/alternatives/alternatives",
+    "pages/settings/settings"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#FBF8F2",
+    "navigationBarTitleText": "觉醒",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F7F3EC"
+  },
+  "tabBar": {
+    "color": "#6B655F",
+    "selectedColor": "#DD9A82",
+    "backgroundColor": "#FBF8F2",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "觉醒",
+        "iconPath": "images/tab-home.png",
+        "selectedIconPath": "images/tab-home-active.png"
+      },
+      {
+        "pagePath": "pages/tradeoff/tradeoff",
+        "text": "权衡",
+        "iconPath": "images/tab-scale.png",
+        "selectedIconPath": "images/tab-scale-active.png"
+      },
+      {
+        "pagePath": "pages/rescue/rescue",
+        "text": "救援",
+        "iconPath": "images/tab-rescue.png",
+        "selectedIconPath": "images/tab-rescue-active.png"
+      },
+      {
+        "pagePath": "pages/stats/stats",
+        "text": "成长",
+        "iconPath": "images/tab-stats.png",
+        "selectedIconPath": "images/tab-stats-active.png"
+      },
+      {
+        "pagePath": "pages/settings/settings",
+        "text": "设置",
+        "iconPath": "images/tab-settings.png",
+        "selectedIconPath": "images/tab-settings-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

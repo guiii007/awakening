@@ -1,0 +1,148 @@
+<view class="container tabbar-page {{theme === 'dark' ? 'dark' : ''}}">
+  <!-- 步骤 0：选择情绪诱因 -->
+  <block wx:if="{{step === 0}}">
+    <view class="text-center mt-10">
+      <text class="text-xs tracking-[0.3em] text-dawn-400 font-medium uppercase">第 1 步</text>
+      <text class="font-serif text-3xl font-bold text-ink-600 mt-2 block">先停下来，看看是什么</text>
+      <text class="text-sm text-ink-400 mt-2 block">给当下的情绪贴个标签，它就没那么可怕了</text>
+    </view>
+
+    <view class="mt-8 grid grid-cols-3 gap-4">
+      <block wx:for="{{triggerOptions}}" wx:key="value">
+        <button
+          bindtap="selectTrigger"
+          data-trigger="{{item.value}}"
+          class="flex flex-col items-center gap-2 p-5 rounded-2xl border transition {{selectedTrigger === item.value ? 'bg-dawn-100 border-dawn-300 scale-95' : 'bg-cream-50/80 border-cream-200/60'}}"
+        >
+          <text style="font-size: 56rpx;">{{item.emoji}}</text>
+          <text class="text-sm font-medium text-ink-600">{{item.label}}</text>
+        </button>
+      </block>
+    </view>
+
+    <view class="mt-10">
+      <button bindtap="startBreathing" class="btn-primary w-full text-base">
+        开始 60 秒呼吸
+      </button>
+    </view>
+  </block>
+
+  <!-- 步骤 1：呼吸 -->
+  <block wx:if="{{step === 1}}">
+    <view class="text-center mt-10">
+      <text class="text-xs tracking-[0.3em] text-sage-400 font-medium uppercase">第 2 步 · 冷却</text>
+      <text class="font-serif text-2xl font-bold text-ink-600 mt-2 block">跟着圆圈，慢慢呼吸</text>
+      <text class="text-sm text-ink-400 mt-1 block">4-7-8 呼吸法：吸气 4 秒 · 屏息 7 秒 · 呼气 8 秒</text>
+    </view>
+
+    <view class="mt-12 flex justify-center">
+      <view class="relative w-72 h-72 flex items-center justify-center">
+        <!-- 外圈轨道 -->
+        <view class="absolute inset-0 rounded-full" style="border: 6rpx solid #E2D9C6;"></view>
+        <!-- 呼吸圆球 -->
+        <view
+          class="w-48 h-48 rounded-full transition-all ease-in-out"
+          style="background: {{breathingPhase === 0 ? '#8FA89B' : breathingPhase === 1 ? '#9B8FA8' : '#E8B4A0'}}; transform: scale({{breathingPhase === 0 ? 1.4 : breathingPhase === 1 ? 1.4 : 1}}); transition-duration: {{breathingPhase === 0 ? '4s' : breathingPhase === 1 ? '0.3s' : '8s'}}; box-shadow: 0 0 60rpx -10rpx {{breathingPhase === 0 ? '#8FA89B' : breathingPhase === 1 ? '#9B8FA8' : '#E8B4A0'}};"
+        ></view>
+        <!-- 文字 -->
+        <view class="absolute inset-0 flex flex-col items-center justify-center">
+          <text class="font-serif text-3xl font-bold text-white" style="text-shadow: 0 2rpx 8rpx rgba(0,0,0,0.15);">{{breathingText}}</text>
+          <text class="text-xs text-white/80 mt-1" style="text-shadow: 0 2rpx 8rpx rgba(0,0,0,0.15);">第 {{breathCount + 1}} / {{totalBreaths}} 轮</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="mt-12 text-center">
+      <button bindtap="backToStart" class="btn-ghost text-sm">
+        我已经冷静了，跳过
+      </button>
+    </view>
+  </block>
+
+  <!-- 步骤 2：AI 对话 / 复盘 -->
+  <block wx:if="{{step === 2}}">
+    <view class="text-center mt-10">
+      <text class="text-xs tracking-[0.3em] text-dusk-300 font-medium uppercase">第 3 步 · 梳理</text>
+      <text class="font-serif text-2xl font-bold text-ink-600 mt-2 block">现在，你想怎么做？</text>
+      <text class="text-sm text-ink-400 mt-1 block">找 AI 聊一聊，或者看看以前的自己</text>
+    </view>
+
+    <view class="mt-8 space-y-4">
+      <button bindtap="goToChat" class="w-full text-left p-5 rounded-2xl bg-gradient-to-br from-dawn-100/80 to-cream-100/60 border border-cream-200/60 hover:shadow-softer transition group">
+        <view class="flex items-start gap-4">
+          <view class="w-12 h-12 rounded-full bg-dawn-200 flex items-center justify-center shrink-0">
+            <text style="font-size: 48rpx;">💬</text>
+          </view>
+          <view class="flex-1">
+            <text class="font-serif text-lg font-bold text-ink-600 block">找 AI 聊一聊</text>
+            <text class="text-xs text-ink-400 mt-1 block">把心里的话说出来，让小醒陪你梳理</text>
+          </view>
+          <text class="text-ink-400">→</text>
+        </view>
+      </button>
+
+      <button bindtap="goToReview" class="w-full text-left p-5 rounded-2xl bg-gradient-to-br from-sage-100/80 to-cream-100/60 border border-cream-200/60 hover:shadow-softer transition group">
+        <view class="flex items-start gap-4">
+          <view class="w-12 h-12 rounded-full bg-sage-200 flex items-center justify-center shrink-0">
+            <text style="font-size: 48rpx;">📖</text>
+          </view>
+          <view class="flex-1">
+            <text class="font-serif text-lg font-bold text-ink-600 block">看看历史记录</text>
+            <text class="text-xs text-ink-400 mt-1 block">过去的你是怎么走出来的</text>
+          </view>
+          <text class="text-ink-400">→</text>
+        </view>
+      </button>
+    </view>
+
+    <!-- 直接记录 -->
+    <view class="mt-8">
+      <text class="text-xs text-ink-400 text-center block">或者，直接记录这次：</text>
+      <view class="mt-4 flex gap-3">
+        <button bindtap="showResult" data-type="restrain" class="btn-sage flex-1 text-sm">
+          克制成功
+        </button>
+        <button bindtap="showResult" data-type="relapse" class="btn-ghost flex-1 text-sm">
+          没扛住
+        </button>
+      </view>
+    </view>
+  </block>
+
+  <!-- 记录弹窗 -->
+  <view wx:if="{{showCelebration}}" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="background: rgba(42, 39, 36, 0.6);">
+    <view class="w-full max-w-md p-8 rounded-3xl text-center relative overflow-hidden" style="background: {{celebrationType === 'success' ? 'linear-gradient(135deg, rgba(143, 168, 155, 0.15) 0%, rgba(155, 143, 168, 0.1) 100%), #FBF8F2' : 'linear-gradient(135deg, rgba(232, 180, 160, 0.15) 0%, rgba(212, 184, 150, 0.1) 100%), #FBF8F2'}};">
+      <!-- 装饰 -->
+      <view class="absolute top-0 left-0 right-0 h-1.5" style="background: linear-gradient(90deg, {{celebrationType === 'success' ? '#8FA89B' : '#E8B4A0'}}, {{celebrationType === 'success' ? '#9B8FA8' : '#D4B896'}});"></view>
+      
+      <view class="text-6xl mb-4">{{celebrationType === 'success' ? '🎉' : '💗'}}</view>
+      <text class="font-serif text-3xl font-bold text-ink-600 block">{{celebrationType === 'success' ? '克制成功！' : '没关系的'}}</text>
+      <text class="text-ink-500 mt-2 block">{{celebrationType === 'success' ? '又一次选择了更好的自己' : '每一次觉察都是在积蓄力量'}}</text>
+
+      <view class="mt-6 text-left">
+        <text class="text-sm font-medium text-ink-600 mb-2 block">当时的场景（选填）</text>
+        <textarea
+          value="{{scenario}}"
+          bindinput="onScenarioInput"
+          placeholder="比如：晚上一个人刷手机..."
+          class="input-soft w-full h-24 resize-none"
+        />
+      </view>
+
+      <view class="mt-4 text-left">
+        <text class="text-sm font-medium text-ink-600 mb-2 block">现在的感受（选填）</text>
+        <textarea
+          value="{{outcomeNote}}"
+          bindinput="onOutcomeInput"
+          placeholder="写点什么帮助以后的自己..."
+          class="input-soft w-full h-24 resize-none"
+        />
+      </view>
+
+      <view class="mt-6 flex gap-3">
+        <button bindtap="closeCelebration" class="btn-ghost flex-1 text-sm">再想想</button>
+        <button bindtap="saveEvent" class="btn-primary flex-1 text-sm">记录下来</button>
+      </view>
+    </view>
+  </view>
+</view>

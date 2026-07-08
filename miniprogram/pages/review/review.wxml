@@ -1,0 +1,102 @@
+<view class="container {{theme === 'dark' ? 'dark' : ''}}">
+  <view class="mt-6">
+    <text class="text-xs tracking-widest text-dusk-300 uppercase font-medium">历史复盘</text>
+    <text class="font-serif text-3xl font-bold text-ink-600 mt-2 block">看看过去的自己</text>
+    <text class="text-sm text-ink-400 mt-2 block">历史不是评判，而是理解自己的镜子</text>
+  </view>
+
+  <!-- Tab 切换 -->
+  <view class="mt-6 flex p-1 rounded-full bg-cream-100/80">
+    <button
+      bindtap="switchTab"
+      data-tab="events"
+      class="flex-1 py-2 rounded-full text-sm font-medium transition {{activeTab === 'events' ? 'bg-cream-50 text-ink-600 shadow-sm' : 'text-ink-400'}}"
+    >
+      事件记录
+    </button>
+    <button
+      bindtap="switchTab"
+      data-tab="tradeoffs"
+      class="flex-1 py-2 rounded-full text-sm font-medium transition {{activeTab === 'tradeoffs' ? 'bg-cream-50 text-ink-600 shadow-sm' : 'text-ink-400'}}"
+    >
+      权衡笔记
+    </button>
+  </view>
+
+  <!-- 事件列表 -->
+  <block wx:if="{{activeTab === 'events'}}">
+    <view wx:if="{{events.length > 0}}" class="mt-6 space-y-3">
+      <block wx:for="{{events}}" wx:key="id">
+        <view bindtap="toggleExpand" data-id="{{item.id}}" class="card p-4 cursor-pointer">
+          <view class="flex items-center gap-3">
+            <view class="w-3 h-3 rounded-full {{item.type === 'restrain' ? 'bg-sage-300' : 'bg-dawn-300'}}"></view>
+            <text class="text-xs text-ink-400 w-24 shrink-0">{{item.timestamp}}</text>
+            <text class="text-sm text-ink-600 flex-1 truncate">{{item.scenario || '未记录'}}</text>
+            <view class="text-[11px] px-2 py-0.5 rounded-full {{item.type === 'restrain' ? 'bg-sage-100 text-sage-500' : 'bg-dawn-100 text-dawn-400'}}">
+              {{item.type === 'restrain' ? '克制' : '放纵'}}
+            </view>
+          </view>
+          <view wx:if="{{expandedId === item.id}}" class="mt-4 pt-4 border-t border-cream-200/60 text-sm">
+            <view class="mb-3">
+              <text class="text-xs text-ink-400 block mb-1">诱因</text>
+              <text class="text-ink-600">{{TRIGGER_LABELS[item.trigger] || '其他'}}</text>
+            </view>
+            <view class="mb-3">
+              <text class="text-xs text-ink-400 block mb-1">场景描述</text>
+              <text class="text-ink-600">{{item.scenario || '未记录'}}</text>
+            </view>
+            <view wx:if="{{item.outcomeNote}}">
+              <text class="text-xs text-ink-400 block mb-1">事后感受</text>
+              <text class="text-ink-600">{{item.outcomeNote}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+    <view wx:else class="mt-16 text-center">
+      <text style="font-size: 96rpx; opacity: 0.3;">📝</text>
+      <text class="font-serif text-xl font-bold text-ink-600 mt-4 block">还没有记录</text>
+      <text class="text-sm text-ink-400 mt-2 block">每一次记录，都是成长的足迹</text>
+    </view>
+  </block>
+
+  <!-- 权衡笔记列表 -->
+  <block wx:if="{{activeTab === 'tradeoffs'}}">
+    <view wx:if="{{tradeoffs.length > 0}}" class="mt-6 space-y-4">
+      <block wx:for="{{tradeoffs}}" wx:key="id">
+        <view bindtap="toggleExpand" data-id="{{item.id}}" class="card p-5 cursor-pointer">
+          <text class="text-[11px] tracking-widest text-dawn-400 uppercase font-medium mb-1.5 block">长期目标</text>
+          <text class="font-serif text-lg font-bold text-ink-600 leading-snug block">{{item.longGoal}}</text>
+          <view wx:if="{{expandedId === item.id}}" class="mt-4 pt-4 border-t border-cream-200/60">
+            <view class="grid grid-cols-2 gap-3 mb-4">
+              <view class="p-3 rounded-xl bg-sage-100/60">
+                <text class="text-[11px] tracking-widest text-sage-500 uppercase font-medium block">长期收益</text>
+                <text class="text-sm text-ink-600 mt-1 block">{{item.longReward}}</text>
+              </view>
+              <view class="p-3 rounded-xl bg-dawn-100/60">
+                <text class="text-[11px] tracking-widest text-dawn-400 uppercase font-medium block">短期快感</text>
+                <text class="text-sm text-ink-600 mt-1 block">{{item.shortGain}}</text>
+              </view>
+            </view>
+            <view wx:if="{{item.sacrifices.length > 0}}" class="mb-3">
+              <text class="text-xs text-ink-400 block mb-2">主动舍弃</text>
+              <view class="flex flex-wrap gap-2">
+                <block wx:for="{{item.sacrifices}}" wx:for-item="sac" wx:key="*this">
+                  <view class="chip bg-dawn-100/70 text-dawn-400 text-[11px] py-1">{{sac}}</view>
+                </block>
+              </view>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+    <view wx:else class="mt-16 text-center">
+      <text style="font-size: 96rpx; opacity: 0.3;">⚖️</text>
+      <text class="font-serif text-xl font-bold text-ink-600 mt-4 block">还没有权衡笔记</text>
+      <text class="text-sm text-ink-400 mt-2 block">写下来，才能看清</text>
+      <button bindtap="goToTradeoff" class="btn-primary mt-6">
+        写第一份
+      </button>
+    </view>
+  </block>
+</view>

@@ -1,0 +1,140 @@
+<view class="container tabbar-page {{theme === 'dark' ? 'dark' : ''}}">
+  <view class="mt-6">
+    <text class="text-xs tracking-widest text-dawn-400 uppercase font-medium">得失权衡</text>
+    <text class="font-serif text-3xl font-bold text-ink-600 mt-2 block">看清你真正想要的</text>
+    <text class="text-sm text-ink-400 mt-2 block">把模糊的欲望，变成清晰的选择</text>
+  </view>
+
+  <view class="mt-6">
+    <button bindtap="openForm" class="btn-primary w-full">
+      写一份新的权衡
+    </button>
+  </view>
+
+  <!-- 列表 -->
+  <view class="mt-6 space-y-4">
+    <block wx:for="{{tradeoffs}}" wx:key="id">
+      <view class="card p-5">
+        <view class="flex items-start justify-between">
+          <view class="flex-1">
+            <text class="text-[11px] tracking-widest text-dawn-400 uppercase font-medium mb-1.5 block">长期目标</text>
+            <text class="font-serif text-lg font-bold text-ink-600 leading-snug block">{{item.longGoal}}</text>
+          </view>
+          <text bindtap="deleteTradeoff" data-id="{{item.id}}" class="text-ink-400 text-xs ml-3">删除</text>
+        </view>
+
+        <view class="mt-4 grid grid-cols-2 gap-3">
+          <view class="p-3 rounded-xl bg-sage-100/60">
+            <text class="text-[11px] tracking-widest text-sage-500 uppercase font-medium block">长期收益</text>
+            <text class="text-sm text-ink-600 mt-1 block line-clamp-3">{{item.longReward}}</text>
+          </view>
+          <view class="p-3 rounded-xl bg-dawn-100/60">
+            <text class="text-[11px] tracking-widest text-dawn-400 uppercase font-medium block">短期快感</text>
+            <text class="text-sm text-ink-600 mt-1 block line-clamp-3">{{item.shortGain}}</text>
+          </view>
+        </view>
+
+        <view wx:if="{{item.sacrifices.length > 0}}" class="mt-3 flex items-start gap-2 flex-wrap">
+          <block wx:for="{{item.sacrifices}}" wx:for-item="sac" wx:key="*this">
+            <view class="chip bg-dawn-100/70 text-dawn-400 text-[11px] py-1">舍：{{sac}}</view>
+          </block>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view wx:if="{{tradeoffs.length === 0}}" class="mt-16 text-center">
+    <text style="font-size: 96rpx; opacity: 0.3;">⚖️</text>
+    <text class="font-serif text-xl font-bold text-ink-600 mt-4 block">还没有权衡笔记</text>
+    <text class="text-sm text-ink-400 mt-2 block">写下来，才能看清</text>
+    <button bindtap="openForm" class="btn-primary mt-6">
+      写第一份
+    </button>
+  </view>
+
+  <!-- 表单弹窗 -->
+  <view wx:if="{{showForm}}" class="fixed inset-0 z-50 flex items-end" style="background: rgba(42, 39, 36, 0.6);">
+    <view class="w-full bg-cream-50 rounded-t-3xl p-6 max-h-[85vh] overflow-y-auto">
+      <!-- 进度 -->
+      <view class="flex items-center justify-between mb-6">
+        <text class="text-xs text-ink-400">第 {{formStep + 1}} / 4 步</text>
+        <text bindtap="closeForm" class="text-ink-400">关闭</text>
+      </view>
+
+      <!-- 步骤 0：长期目标 -->
+      <block wx:if="{{formStep === 0}}">
+        <text class="text-xs tracking-widest text-dawn-400 uppercase font-medium">第一步</text>
+        <text class="font-serif text-2xl font-bold text-ink-600 mt-2 block">你真正想要的是什么？</text>
+        <text class="text-sm text-ink-400 mt-2 block">那个藏在心底的、长期真正想成为的自己</text>
+        <view class="mt-6">
+          <textarea
+            value="{{longGoal}}"
+            bindinput="onLongGoalInput"
+            placeholder="比如：成为一个自律、健康、内心平静的人..."
+            class="input-soft w-full h-32 resize-none"
+          />
+        </view>
+        <button bindtap="nextStep" class="btn-primary w-full mt-6 {{longGoal ? '' : 'opacity-50'}}" disabled="{{!longGoal}}">
+          下一步
+        </button>
+      </block>
+
+      <!-- 步骤 1：短期快感 -->
+      <block wx:if="{{formStep === 1}}">
+        <text class="text-xs tracking-widest text-dawn-400 uppercase font-medium">第二步</text>
+        <text class="font-serif text-2xl font-bold text-ink-600 mt-2 block">让你上瘾的是什么？</text>
+        <text class="text-sm text-ink-400 mt-2 block">诚实面对它，不必羞耻</text>
+        <view class="mt-6">
+          <textarea
+            value="{{shortGain}}"
+            bindinput="onShortGainInput"
+            placeholder="比如：刷短视频带来的即时刺激..."
+            class="input-soft w-full h-32 resize-none"
+          />
+        </view>
+        <view class="flex gap-3 mt-6">
+          <button bindtap="prevStep" class="btn-ghost flex-1">上一步</button>
+          <button bindtap="nextStep" class="btn-primary flex-1 {{shortGain ? '' : 'opacity-50'}}" disabled="{{!shortGain}}">下一步</button>
+        </view>
+      </block>
+
+      <!-- 步骤 2：需要舍弃 -->
+      <block wx:if="{{formStep === 2}}">
+        <text class="text-xs tracking-widest text-dawn-400 uppercase font-medium">第三步</text>
+        <text class="font-serif text-2xl font-bold text-ink-600 mt-2 block">为了目标，你愿意舍弃什么？</text>
+        <text class="text-sm text-ink-400 mt-2 block">每行一个，越具体越好</text>
+        <view class="mt-6">
+          <textarea
+            value="{{sacrificesText}}"
+            bindinput="onSacrificesInput"
+            placeholder="比如：&#10;每天睡前刷手机的时间&#10;即时满足的冲动&#10;..."
+            class="input-soft w-full h-40 resize-none"
+          />
+        </view>
+        <view class="flex gap-3 mt-6">
+          <button bindtap="prevStep" class="btn-ghost flex-1">上一步</button>
+          <button bindtap="nextStep" class="btn-primary flex-1 {{sacrificesText ? '' : 'opacity-50'}}" disabled="{{!sacrificesText}}">下一步</button>
+        </view>
+      </block>
+
+      <!-- 步骤 3：长期收益 -->
+      <block wx:if="{{formStep === 3}}">
+        <text class="text-xs tracking-widest text-dawn-400 uppercase font-medium">第四步</text>
+        <text class="font-serif text-2xl font-bold text-ink-600 mt-2 block">坚持下去，你会收获什么？</text>
+        <text class="text-sm text-ink-400 mt-2 block">写下那些让你心动的画面</text>
+        <view class="mt-6">
+          <textarea
+            value="{{longReward}}"
+            bindinput="onLongRewardInput"
+            placeholder="比如：健康的身体、平静的内心、更好的生活质量..."
+            class="input-soft w-full h-32 resize-none"
+          />
+        </view>
+        <view class="flex gap-3 mt-6">
+          <button bindtap="prevStep" class="btn-ghost flex-1">上一步</button>
+          <button bindtap="saveTradeoff" class="btn-primary flex-1 {{longReward ? '' : 'opacity-50'}}" disabled="{{!longReward}}">保存</button>
+        </view>
+      </block>
+    </view>
+  </view>
+</view>

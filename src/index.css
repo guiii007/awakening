@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+  color: #3A3633;
+  background-color: #F7F3EC;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body, #root {
+  min-height: 100vh;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(at 12% 8%, rgba(232, 180, 160, 0.18) 0px, transparent 50%),
+    radial-gradient(at 88% 12%, rgba(155, 143, 168, 0.14) 0px, transparent 45%),
+    radial-gradient(at 70% 92%, rgba(143, 168, 155, 0.16) 0px, transparent 50%),
+    linear-gradient(180deg, #FBF8F2 0%, #F7F3EC 100%);
+  background-attachment: fixed;
+}
+
+.dark body {
+  background:
+    radial-gradient(at 12% 8%, rgba(232, 180, 160, 0.08) 0px, transparent 50%),
+    radial-gradient(at 88% 12%, rgba(155, 143, 168, 0.06) 0px, transparent 45%),
+    radial-gradient(at 70% 92%, rgba(143, 168, 155, 0.07) 0px, transparent 50%),
+    linear-gradient(180deg, #1F1D1B 0%, #151413 100%);
+}
+
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+.dark .text-ink-400 {
+  color: rgba(239, 233, 221, 0.7) !important;
+}
+
+.dark .text-ink-500 {
+  color: rgba(239, 233, 221, 0.85) !important;
+}
+
+.dark .text-ink-600 {
+  color: rgba(251, 248, 242, 0.95) !important;
+}
+
+.dark .text-ink-700 {
+  color: #FBF8F2 !important;
+}
+
+.dark .bg-cream-50\/80,
+.dark .bg-cream-50\/60,
+.dark .bg-cream-50\/50,
+.dark .bg-cream-50\/90 {
+  background-color: rgba(26, 24, 23, 0.8) !important;
+}
+
+.dark .bg-cream-100\/80,
+.dark .bg-cream-100\/60,
+.dark .bg-cream-100\/70,
+.dark .bg-cream-100\/50 {
+  background-color: rgba(42, 39, 36, 0.7) !important;
+}
+
+.dark .bg-cream-200\/60,
+.dark .bg-cream-200\/70,
+.dark .bg-cream-200\/50,
+.dark .bg-cream-200\/40,
+.dark .bg-cream-200\/30 {
+  background-color: rgba(42, 39, 36, 0.5) !important;
+}
+
+.dark .border-cream-200\/60,
+.dark .border-cream-200\/70,
+.dark .border-cream-200\/50,
+.dark .border-cream-200\/40,
+.dark .border-cream-200\/30 {
+  border-color: rgba(251, 248, 242, 0.1) !important;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(155, 143, 168, 0.3);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(155, 143, 168, 0.5);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(155, 143, 168, 0.2);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(155, 143, 168, 0.4);
+}
+
+@layer components {
+  .card {
+    @apply bg-cream-50/80 backdrop-blur-sm rounded-4xl border border-cream-200/60 shadow-softer;
+  }
+  .dark .card {
+    @apply bg-night-200/80 border-night-50/30;
+  }
+  .card-hover {
+    @apply transition-all duration-300 hover:shadow-soft hover:-translate-y-0.5;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-dawn-300 text-cream-50 font-medium tracking-wide transition-all duration-300 hover:bg-dawn-400 hover:shadow-glow active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .dark .btn-primary {
+    @apply bg-dawn-dark text-cream-100 hover:bg-dawn-400;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full bg-cream-200/60 text-ink-600 font-medium transition-all duration-300 hover:bg-cream-300/70 active:scale-95;
+  }
+  .dark .btn-ghost {
+    @apply bg-night-50/50 text-ink-dark hover:bg-night-50/70;
+  }
+  .btn-sage {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-sage-300 text-cream-50 font-medium transition-all duration-300 hover:bg-sage-400 active:scale-95;
+  }
+  .dark .btn-sage {
+    @apply bg-sage-dark text-cream-100 hover:bg-sage-400;
+  }
+  .input-soft {
+    @apply w-full px-4 py-3 rounded-2xl bg-cream-50/90 border border-cream-200 text-ink-600 placeholder:text-ink-400/60 focus:outline-none focus:ring-2 focus:ring-dawn-300/40 transition-all;
+  }
+  .dark .input-soft {
+    @apply bg-night-100/90 border-night-50/40 text-ink-dark placeholder:text-ink-dark/40 focus:ring-dawn-dark/30;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-200;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .grain {
+    position: relative;
+  }
+  .grain::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}

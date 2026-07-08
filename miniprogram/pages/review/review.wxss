@@ -1,0 +1,31 @@
+.space-y-3 > * + * { margin-top: 24rpx; }
+.space-y-4 > * + * { margin-top: 32rpx; }
+.w-full { width: 100%; }
+.w-3 { width: 12rpx; }
+.w-24 { width: 96rpx; }
+.h-3 { height: 12rpx; }
+
+.cursor-pointer { cursor: pointer; }
+.shadow-sm { box-shadow: 0 2rpx 8rpx rgba(58, 54, 51, 0.06); }
+
+.bg-sage-300 { background: #8FA89B; }
+.bg-dawn-300 { background: #E8B4A0; }
+.bg-sage-100 { background: #DDE5E0; }
+.bg-dawn-100 { background: #F7DDD2; }
+.bg-cream-50 { background: #FBF8F2; }
+.bg-cream-100\/80 { background: rgba(247, 243, 236, 0.8); }
+.bg-sage-100\/60 { background: rgba(221, 229, 224, 0.6); }
+.bg-dawn-100\/60 { background: rgba(247, 221, 210, 0.6); }
+.bg-dawn-100\/70 { background: rgba(247, 221, 210, 0.7); }
+
+.text-sage-500 { color: #536B5E; }
+.text-dawn-400 { color: #DD9A82; }
+
+.mb-1 { margin-bottom: 8rpx; }
+.mb-1\.5 { margin-bottom: 12rpx; }
+.mb-2 { margin-bottom: 16rpx; }
+.mb-3 { margin-bottom: 24rpx; }
+.mb-4 { margin-bottom: 32rpx; }
+.mt-16 { margin-top: 128rpx; }
+
+.border-t { border-top-width: 1rpx; border-top-style: solid; }

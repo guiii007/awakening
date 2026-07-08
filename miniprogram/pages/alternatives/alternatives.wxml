@@ -1,0 +1,39 @@
+<view class="container {{theme === 'dark' ? 'dark' : ''}}">
+  <view class="mt-6">
+    <text class="text-xs tracking-widest text-sage-400 uppercase font-medium">健康替代</text>
+    <text class="font-serif text-3xl font-bold text-ink-600 mt-2 block">换一件事做</text>
+    <text class="text-sm text-ink-400 mt-2 block">不需要硬扛，用一件更好的事替换它</text>
+  </view>
+
+  <view class="mt-6 space-y-6">
+    <block wx:for="{{alternatives}}" wx:key="id">
+      <view class="card p-5">
+        <view class="flex items-center gap-3 mb-4">
+          <view class="w-12 h-12 rounded-full flex items-center justify-center" style="background: {{item.color}}22;">
+            <text style="font-size: 40rpx;">{{item.icon}}</text>
+          </view>
+          <text class="font-serif text-lg font-bold text-ink-600">{{item.category}}</text>
+        </view>
+        <view class="space-y-3">
+          <block wx:for="{{item.items}}" wx:for-item="alt" wx:key="title">
+            <view bindtap="tryItem" data-title="{{alt.title}}" class="flex items-start justify-between p-4 rounded-2xl bg-cream-100/60 hover:bg-cream-100 transition cursor-pointer">
+              <view class="flex-1">
+                <text class="text-sm font-medium text-ink-600 block">{{alt.title}}</text>
+                <text class="text-xs text-ink-400 mt-1 block">{{alt.desc}}</text>
+              </view>
+              <text class="text-[11px] text-ink-400 shrink-0 ml-3">{{alt.duration}}</text>
+            </view>
+          </block>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view class="mt-8 card p-6 text-center">
+    <text class="text-2xl">💗</text>
+    <text class="font-serif text-xl font-bold text-ink-600 mt-2 block">记住</text>
+    <text class="text-sm text-ink-500 mt-2 block leading-relaxed">
+      你不需要做到完美。\n每一次选择不同的方式，都是在锻炼你的觉察肌肉。\n慢慢来，你已经在变得更好了。
+    </text>
+  </view>
+</view>
