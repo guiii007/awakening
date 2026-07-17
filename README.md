@@ -1,57 +1,77 @@
-# React + TypeScript + Vite
+# 🌅 觉醒 · 自控力训练
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> 🚀 **[🎮 在线体验 →](https://guiii007.github.io/awakening/)**
 
-Currently, two official plugins are available:
+一款用 AI 引导你从本能冲动中抽离、循序提升自控力的治愈系工具。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## ✨ 核心理念
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+我们每天都会面对各种冲动——刷短视频、暴饮暴食、冲动消费、拖延逃避。**觉醒** 不是简单地告诉你「忍住」，而是通过 AI 对话引导你：
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+- 🔍 **觉察**：意识到自己正处于冲动之中
+- ⚖️ **权衡**：看清冲动行为的长远代价
+- 💬 **对话**：与 AI 进行走心的交流，找到冲动背后的根源
+- 🛟 **救援**：在冲动临界点获得及时的干预与替代方案
+
+---
+
+## 🎯 功能模块
+
+| 模块 | 说明 |
+|------|------|
+| 🏠 **首页** | 记录今日状态，开启训练之旅 |
+| ⚖️ **权衡决策** | 可视化冲动行为的利弊，辅助理性决策 |
+| 💬 **AI 对话** | 与 AI 深度交流，探索冲动背后的情绪与需求 |
+| 📋 **回顾** | 回顾过去的冲动事件与应对方式，积累成长经验 |
+| 🛟 **紧急救援** | 冲动来临时，获得即时干预与替代行为建议 |
+| 📊 **数据统计** | 可视化自控力成长数据与趋势图表 |
+| 🔄 **替代方案** | 发现健康的替代行为，建立新习惯 |
+| ⚙️ **个性化设置** | 自定义你的训练体验 |
+
+---
+
+## 🛠️ 技术栈
+
+| 类别 | 技术 |
+|------|------|
+| 前端框架 | React 18 + TypeScript |
+| 构建工具 | Vite |
+| 样式方案 | Tailwind CSS |
+| 动画特效 | Framer Motion |
+| 数据图表 | Recharts |
+| 状态管理 | Zustand |
+| 路由管理 | React Router DOM v7 |
+| 图标库 | Lucide React |
+
+---
+
+## 🚀 本地运行
+
+```bash
+# 克隆仓库
+git clone https://github.com/guiii007/awakening.git
+cd awakening
+
+# 安装依赖
+npm install
+
+# 启动开发服务器
+npm run dev
+
+# 构建生产版本
+npm run build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 📱 小程序版本
 
-export default tseslint.config({
-  extends: [
-    // other configs...
-    // Enable lint rules for React
-    reactX.configs['recommended-typescript'],
-    // Enable lint rules for React DOM
-    reactDom.configs.recommended,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+本项目同时提供微信小程序版本，源码位于 `miniprogram/` 目录，压缩包见 `awakening-miniprogram.zip`。
+
+---
+
+## 📄 许可
+
+MIT
