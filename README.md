@@ -47,31 +47,6 @@
 
 ---
 
-## 🚀 本地运行
-
-```bash
-# 克隆仓库
-git clone https://github.com/guiii007/awakening.git
-cd awakening
-
-# 安装依赖
-npm install
-
-# 启动开发服务器
-npm run dev
-
-# 构建生产版本
-npm run build
-```
-
----
-
-## 📱 小程序版本
-
-本项目同时提供微信小程序版本，源码位于 `miniprogram/` 目录，压缩包见 `awakening-miniprogram.zip`。
-
----
-
 ## 📄 许可
 
 MIT
